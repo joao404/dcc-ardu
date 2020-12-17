@@ -60,9 +60,11 @@ decide to ignore the <q ID> return and only react to <Q ID> triggers.
 #include "EEStore.h"
 #include <EEPROM.h>
 #include "Comm.h"
-
+#include "S88.h"
 ///////////////////////////////////////////////////////////////////////////////
-  
+
+static S88 s88Interface;
+ 
 void Sensor::check(){    
   Sensor *tt;
 
@@ -81,14 +83,22 @@ void Sensor::check(){
       INTERFACE.print(">");
     }
   } // loop over all sensors
+
+  //Check S88
+  s88Interface.cycle();
+
     
 } // Sensor::check
 
 ///////////////////////////////////////////////////////////////////////////////
 
 Sensor *Sensor::create(int snum, int pin, int pullUp, int v){
+
   Sensor *tt;
-  
+
+  if(snum<S88AdrMax && pin<S88AdrMax && snum>1 && pin>1)//address not higher than Basisaddress of S88 and not effecting TX/RX at 0/1
+  {
+    
   if(firstSensor==NULL){
     firstSensor=(Sensor *)calloc(1,sizeof(Sensor));
     tt=firstSensor;
@@ -116,6 +126,26 @@ Sensor *Sensor::create(int snum, int pin, int pullUp, int v){
 
   if(v==1)
     INTERFACE.print("<O>");
+
+  s88Interface.init(snum);//execute Init for S88
+
+  }
+  else//value lies above 100 so we won't save it but we have to return tt
+  {
+    if(firstSensor==NULL){
+    tt=firstSensor;
+    } else if((tt=get(snum))==NULL){
+    tt=firstSensor;
+    while(tt->nextSensor!=NULL)
+      tt=tt->nextSensor;
+    }
+
+    if(v==1)
+      INTERFACE.print("<X>");
+
+  }
+
+    
   return(tt);
   
 }
@@ -146,6 +176,8 @@ void Sensor::remove(int n){
 
   free(tt);
 
+  s88Interface.deactivate(n);
+  
   INTERFACE.print("<O>");
 }
 
@@ -191,6 +223,7 @@ void Sensor::status(){
 
 void Sensor::parse(char *c){
   int n,s,m;
+  Sensor *t;
   
   switch(sscanf(c,"%d %d %d",&n,&s,&m)){
     

@@ -20,7 +20,11 @@ VoltageMonitor::VoltageMonitor(byte sp, byte vp){
     this->voltagepin=vp;
     for(int n=0; n<vcount; n++)
 	voltage[n]=0;
+#if MOTOR_SHIELD_TYPE == 2
+	conversionPercent=250;           // see VoltageMonitor.h in case of 10kOhm resistor
+#else
     conversionPercent=300;           // see VoltageMonitor.h
+#endif
 } // VoltageMonitor::VoltageMonitor
   
 unsigned int VoltageMonitor::read() {

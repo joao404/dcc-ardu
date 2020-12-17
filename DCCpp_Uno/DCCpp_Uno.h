@@ -38,7 +38,7 @@ Part of DCC++ BASE STATION for the Arduino
 #define TRIGGERPIN 4                     // Should work on UNO and MEGA
 #endif
 
-#if defined  ARDUINO_AVR_UNO
+#if defined ARDUINO_AVR_UNO || defined ARDUINO_AVR_NANO 
 
   #define ARDUINO_TYPE    "UNO"
 
@@ -108,6 +108,24 @@ Part of DCC++ BASE STATION for the Arduino
   #define DIRECTION_MOTOR_CHANNEL_PIN_A 7
   #define DIRECTION_MOTOR_CHANNEL_PIN_B 8
 
+#elif MOTOR_SHIELD_TYPE == 2
+
+  #define MOTOR_SHIELD_NAME "IBT-2 MOTOR SHIELD"
+  #define MOTOR_SHIELD_CURRENT_LIMIT 1500 //mA  - be conservative because of bad shields
+#ifdef RAILCOM_CUTOUT
+  #define BRAKE_PIN_MAIN 9
+// not used yet  #define BRAKE_PIN_PROG 8
+#endif
+
+  #define SIGNAL_ENABLE_PIN_MAIN 3
+  #define SIGNAL_ENABLE_PIN_PROG 11
+
+  #define CURRENT_MONITOR_PIN_MAIN A0
+  #define CURRENT_MONITOR_PIN_PROG A1
+
+  #define DIRECTION_MOTOR_CHANNEL_PIN_A 12
+  #define DIRECTION_MOTOR_CHANNEL_PIN_B 13
+
 #else
 
   #error CANNOT COMPILE - PLEASE SELECT A PROPER MOTOR SHIELD TYPE
@@ -133,6 +151,24 @@ Part of DCC++ BASE STATION for the Arduino
 
   #error CANNOT COMPILE - Please select a proper value for COMM_INTERFACE in CONFIG.H file
 
+#endif
+
+/////////////////////////////////////////////////////////////////////////////////////
+// SELECT S88 INTERACE
+/////////////////////////////////////////////////////////////////////////////////////
+
+#if defined ARDUINO_AVR_UNO || defined ARDUINO_AVR_NANO || defined ARDUINO_AVR_MEGA2560
+  #define S88DataPin A2
+  #define S88ClkPin A3
+  #define S88PSPin A4
+  #define S88ResetPin A5
+
+  #define S88AdrBase 100
+  #define S88AdrMin 60
+  #define S88AdrMax 100
+  
+#else
+  #error CANNOT COMPILE - NO KNOWN S88 INTERFACE
 #endif
 
 /////////////////////////////////////////////////////////////////////////////////////

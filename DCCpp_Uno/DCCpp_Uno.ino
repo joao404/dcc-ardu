@@ -330,7 +330,7 @@ void setup(){
 
   // CONFIGURE EITHER TIMER_0 (UNO) OR TIMER_3 (MEGA) TO OUTPUT 50% DUTY CYCLE DCC SIGNALS ON OC0B (UNO) OR OC3B (MEGA) INTERRUPT PINS
   
-#ifdef ARDUINO_AVR_UNO      // Configuration for UNO
+#if defined ARDUINO_AVR_UNO || defined ARDUINO_AVR_NANO      // Configuration for UNO and Nano
   
   // Directon Pin for Motor Shield Channel B - PROGRAMMING TRACK
   // Controlled by Arduino 8-bit TIMER 0 / OC0B Interrupt Pin
@@ -516,7 +516,7 @@ ISR(TIMER1_COMPB_vect){     // set interrupt service for OCR1B of TIMER-1 which 
 #endif
 }
 
-#ifdef ARDUINO_AVR_UNO      // Configuration for UNO
+#if defined ARDUINO_AVR_UNO || defined ARDUINO_AVR_NANO      // Configuration for UNO and Nano
 ISR(TIMER0_COMPB_vect){     // set interrupt service for OCR1B of TIMER-0 which flips direction bit of Motor Shield Channel B controlling Prog Track
   DCC_SIGNAL(progRegs,0,PREAMBLE_PROG,/* nothing */)
 }
@@ -620,7 +620,3 @@ void showConfiguration(){
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-
-
-
-
